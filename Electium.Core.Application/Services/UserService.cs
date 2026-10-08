@@ -4,6 +4,7 @@ using Electium.Core.Application.Interfaces;
 using Electium.Core.Domain.Entities;
 using Electium.Core.Domain.Interfaces;
 
+
 namespace Electium.Core.Application.Services
 {
     public class UserService : GenericService<UserDto, User>, IUserService
