@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-// snapshot of whw participates in an election
+// snapshot of who participates in an election
 
 namespace Electium.Core.Domain.Entities
 {
