@@ -1,0 +1,26 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Compilación
+[Bb]in/
+[Oo]bj/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Archivos temporales
+[Tt]est[Rr]esult*/
+*.log
+
+# Rider / ReSharper
+.idea/
+_ReSharper*/
+
+# VS Code
+.vscode/

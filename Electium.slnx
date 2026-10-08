@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Electium.Core.Application/Electium.Core.Application.csproj" />
+  <Project Path="Electium.Core.Domain/Electium.Core.Domain.csproj" />
+  <Project Path="Electium.Infrastructure.Persistence/Electium.Infrastructure.Persistence.csproj" />
+  <Project Path="Electium.Infrastructure.Shared/Electium.Infrastructure.Shared.csproj" />
+  <Project Path="Electium.Presentation.WebApp/Electium.Presentation.WebApp.csproj" />
+</Solution>
