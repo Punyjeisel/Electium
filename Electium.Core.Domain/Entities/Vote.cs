@@ -12,7 +12,7 @@ namespace Electium.Core.Domain.Entities
         public int ElectionId { get; set; }
         public Election Election { get; set; } = null!;
 
-        public int electivePositionId { get; set; }
+        public int ElectivePositionId { get; set; }
         public ElectivePosition ElectivePosition { get; set; } = null!;
 
 

@@ -6,7 +6,7 @@ using System.Text;
 
 // Generic contract for repository pattern, to be implemented by all repositories in the project
 
-namespace Electium.Core.Domain.Interface
+namespace Electium.Core.Domain.Interfaces
 {
     public interface IGenericRepository<T> where T : BaseEntity
     {

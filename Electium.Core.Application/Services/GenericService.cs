@@ -4,7 +4,8 @@ using System.Text;
 using Electium.Core.Domain.Common;
 using Electium.Core.Application.Interfaces;
 using AutoMapper;
-using Electium.Core.Domain.Interface;
+using Electium.Core.Domain.Interfaces;
+using Electium.Core.Domain.Entities;
 
 // Generic service implementation for CRUD operations on DTOs and entities
 
@@ -16,10 +17,17 @@ namespace Electium.Core.Application.Services
     {
         protected readonly IGenericRepository<TEntity> _repository;
         protected readonly IMapper _mapper;
+        private IGenericRepository<User> repository;
 
         public GenericService(IGenericRepository<TEntity> repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
+        }
+
+        public GenericService(IGenericRepository<User> repository, IMapper mapper)
+        {
+            this.repository = repository;
             _mapper = mapper;
         }
 

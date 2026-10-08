@@ -12,6 +12,14 @@ namespace Electium.Core.Application.Mappings
         public UserProfile()
         {
             CreateMap<User, UserDto>().ReverseMap();
+
+            // Password is hadled separately in UserService
+            CreateMap<CreateUserDto, User>()
+                .ForMember(d => d.PasswordHash, opt => opt.Ignore())
+                .ForMember(d => d.IsActive, opt => opt.Ignore());
+
+            CreateMap<UpdateUserDto, User>()
+                .ForMember(d => d.PasswordHash, opt => opt.Ignore());
         }
     }
 }

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-// Generic service interface for CRUD operations on DTOs and entities
+// Generi
 
 namespace Electium.Core.Application.Interfaces
 {
