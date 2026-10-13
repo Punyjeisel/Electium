@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Electium.Core.Application.DTOs
 {
-    internal class CreatePartyLeaderDto
+    public class CreatePartyLeaderDto
     {
+        public int UserId { get; set; }
+        public int PoliticalPartyId { get; set; }
     }
 }

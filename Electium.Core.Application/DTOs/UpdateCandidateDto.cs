@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Electium.Core.Application.DTOs
 {
-    internal class UpdateCandidateDto
+    public class UpdateCandidateDto
     {
+        public int Id { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string? PhotoPath { get; set; }
     }
 }
