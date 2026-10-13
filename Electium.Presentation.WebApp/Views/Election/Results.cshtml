@@ -1,0 +1,41 @@
+﻿@model Electium.Presentation.WebApp.ViewModels.Election.ElectionResultsViewModel
+
+@{
+    ViewData["Title"] = "Resultados";
+}
+
+<h2>Resultados: @Model.ElectionName</h2>
+
+@foreach (var position in Model.Results)
+{
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            @position.PositionName — @position.TotalVotesForPosition votos emitidos
+        </div>
+        <div class="card-body">
+            <table class="table table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th>Candidato</th>
+                        <th>Partido</th>
+                        <th>Votos</th>
+                        <th>Porcentaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var candidate in position.Candidates)
+                    {
+                        <tr>
+                            <td>@candidate.CandidateName</td>
+                            <td>@candidate.PartyAcronym</td>
+                            <td>@candidate.Votes</td>
+                            <td>@candidate.Percentage.ToString("0.00") %</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+<a asp-action="Index" class="btn btn-secondary mt-3">Volver al listado</a>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Electium.Core.Application.Common;
 using Electium.Core.Application.DTOs;
 using Electium.Core.Application.Interfaces;
 using Electium.Core.Domain.Entities;
@@ -51,28 +52,47 @@ namespace Electium.Core.Application.Services
         {
             var elections = await _electionRepository.GetAllAsync();
 
-            // Active first, then by date desc
-            return elections
+            var result = new List<ElectionDto>();
+
+            foreach (var election in elections)
+            {
+                var dto = _mapper.Map<ElectionDto>(election);
+
+                // Participants snapshot
+                var participants = await _electionCandidateRepository.GetAllAsync(
+                    ec => ec.ElectionId == election.Id);
+
+                dto.PartyCount = participants.Select(p => p.PoliticalPartyId).Distinct().Count();
+                dto.PositionCount = participants.Select(p => p.ElectivePositionId).Distinct().Count();
+
+                // Voters
+                var voters = await _electionVoterRepository.GetAllAsync(
+                    ev => ev.ElectionId == election.Id);
+                dto.TotalVotes = voters.Count;
+
+                result.Add(dto);
+            }
+
+            return result
                 .OrderByDescending(e => e.Status == ElectionStatus.InProcess)
                 .ThenByDescending(e => e.Date)
-                .Select(e => _mapper.Map<ElectionDto>(e))
                 .ToList();
         }
 
-        public async Task CreateAsync(CreateElectionDto dto)
+        public async Task<OperationResult> CreateAsync(CreateElectionDto dto)
         {
             if (await HasActiveElectionAsync())
-                throw new InvalidOperationException(
+                return OperationResult.Fail(
                     "Ya existe una elección activa en el sistema.");
 
             var activePositions = await _positionRepository.GetAllAsync(p => p.IsActive);
             if (!activePositions.Any())
-                throw new InvalidOperationException(
+                return OperationResult.Fail(
                     "No hay puestos electivos activos para realizar una elección.");
 
             var activeParties = await _partyRepository.GetAllAsync(p => p.IsActive);
             if (activeParties.Count < 2)
-                throw new InvalidOperationException(
+                return OperationResult.Fail(
                     "No hay suficientes partidos políticos para realizar una elección.");
 
             // For each party, check it has a candidate for every active position
@@ -102,7 +122,7 @@ namespace Electium.Core.Application.Services
             }
 
             if (missingMessages.Any())
-                throw new InvalidOperationException(string.Join(" | ", missingMessages));
+                return OperationResult.Fail(string.Join(" | ", missingMessages));
 
             // Create the election
             var election = _mapper.Map<Election>(dto);
@@ -130,15 +150,20 @@ namespace Electium.Core.Application.Services
                     await _electionCandidateRepository.AddAsync(ec);
                 }
             }
+
+            return OperationResult.Ok();
         }
 
-        public async Task FinishAsync(int electionId)
+        public async Task<OperationResult> FinishAsync(int electionId)
         {
             var election = await _electionRepository.GetByIdAsync(electionId);
-            if (election == null) return;
+            if (election == null)
+                return OperationResult.Fail("La elección no existe.");
 
             election.Status = ElectionStatus.Finished;
             await _electionRepository.UpdateAsync(election);
+
+            return OperationResult.Ok();
         }
 
         public async Task<List<ElectionResultDto>> GetResultsAsync(int electionId)
@@ -189,6 +214,27 @@ namespace Electium.Core.Application.Services
                 .ToList();
 
             return results;
+        }
+
+        public Task<CreateElectionDto?> GetCreateFormDataAsync()
+        {
+            // No form data to preload; placeholder for future validations
+            return Task.FromResult<CreateElectionDto?>(new CreateElectionDto
+            {
+                Date = DateTime.Today
+            });
+        }
+
+        public async Task<FinishElectionViewModelDto?> GetFinishInfoAsync(int id)
+        {
+            var election = await _electionRepository.GetByIdAsync(id);
+            if (election == null) return null;
+
+            return new FinishElectionViewModelDto
+            {
+                Id = election.Id,
+                Name = election.Name
+            };
         }
     }
 }

@@ -1,0 +1,14 @@
+﻿@model Electium.Presentation.WebApp.ViewModels.Election.FinishElectionViewModel
+
+@{
+    ViewData["Title"] = "Confirmar finalización";
+}
+
+<h2>@Model.Message</h2>
+<p class="text-muted">@Model.Name</p>
+
+<form asp-action="Finish" method="post" class="mt-4">
+    <input type="hidden" asp-for="Id" />
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-danger">Aceptar</button>
+</form>
