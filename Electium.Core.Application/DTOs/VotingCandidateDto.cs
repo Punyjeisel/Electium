@@ -4,7 +4,12 @@ using System.Text;
 
 namespace Electium.Core.Application.DTOs
 {
-    internal class VotingCandidateDto
+    public class VotingCandidateDto
     {
+        public int? CandidateId { get; set; }        // null = "Ninguno"
+        public string CandidateName { get; set; } = string.Empty;
+        public string PartyAcronym { get; set; } = string.Empty;
+        public string? PartyLogoPath { get; set; }
+        public string? CandidatePhotoPath { get; set; }
     }
 }

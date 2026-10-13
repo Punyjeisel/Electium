@@ -24,7 +24,7 @@ namespace Electium.Core.Application.Services
             int? excludeCitizenId = null)
         {
             return await _citizenRepository.AnyAsync(c =>
-            c.IdentifyNumber == identityNumber &&
+            c.IdentityNumber == identityNumber &&
             (excludeCitizenId == null || c.Id != excludeCitizenId));
         }
     }
