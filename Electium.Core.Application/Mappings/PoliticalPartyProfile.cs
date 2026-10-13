@@ -12,6 +12,12 @@ namespace Electium.Core.Application.Mappings
         public PoliticalPartyProfile()
         {
             CreateMap<PoliticalParty, PoliticalPartyDto>().ReverseMap();
+
+            CreateMap<CreatePoliticalPartyDto, PoliticalParty>();
+
+            CreateMap<PoliticalParty, UpdatePoliticalPartyDto>();
+            CreateMap<UpdatePoliticalPartyDto, PoliticalParty>()
+                .ForMember(d => d.LogoPath, opt => opt.Ignore());
         }
     }
 }

@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Electium.Core.Application.DTOs
 {
-    internal class CreatePoliticalPartyDto
+    public class CreatePoliticalPartyDto
     {
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string Acronym { get; set; } = string.Empty;
+        public string LogoPath { get; set; } = string.Empty;
     }
 }

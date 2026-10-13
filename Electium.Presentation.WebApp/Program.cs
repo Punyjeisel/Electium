@@ -4,6 +4,7 @@ using Electium.Core.Application.Services;
 using Electium.Core.Domain.Interfaces;
 using Electium.Infrastructure.Persistence;
 using Electium.Infrastructure.Shared;
+using Electium.Infrastructure.Shared.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,7 +42,18 @@ builder.Services.AddScoped<IAllianceService, AllianceService>();
 builder.Services.AddScoped<IElectionService, ElectionService>();
 builder.Services.AddScoped<IVotingService, VotingService>();
 
+builder.Services.AddScoped<IFileStorageService>(sp =>
+{
+    var env = sp.GetRequiredService<IWebHostEnvironment>();
+    return new FileStorageService(env.WebRootPath);
+});
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    await Electium.Presentation.WebApp.Data.DbSeeder.SeedAdminAsync(scope.ServiceProvider);
+}
 
 if (!app.Environment.IsDevelopment())
 {

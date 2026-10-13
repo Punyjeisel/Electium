@@ -22,7 +22,7 @@ namespace Electium.Core.Application.Services
 
         public async Task<LoginResponseDto> LoginAsync(LoginRequestDto request)
         {
-            var user = await _userService.ValidateCredentialAsync(
+            var user = await _userService.ValidateCredentialsAsync(
                 request.UserName, request.Password);
 
             if (user == null)

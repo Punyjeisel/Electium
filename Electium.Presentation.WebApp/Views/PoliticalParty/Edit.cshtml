@@ -1,4 +1,49 @@
-﻿@page
-@model Electium.Presentation.WebApp.Views.PoliticalParty.EditModel
+﻿@model Electium.Presentation.WebApp.ViewModels.PoliticalParty.EditPoliticalPartyViewModel
+
 @{
+    ViewData["Title"] = "Editar Partido";
+}
+
+<h2>Editar Partido Político</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="mt-3">
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CurrentLogoPath" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Acronym" class="form-label"></label>
+        <input asp-for="Acronym" class="form-control" />
+        <span asp-validation-for="Acronym" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Logo actual</label><br />
+        <img src="@Model.CurrentLogoPath" alt="logo" style="height:60px;" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Logo" class="form-label"></label>
+        <input asp-for="Logo" type="file" class="form-control" accept="image/*" />
+        <span asp-validation-for="Logo" class="text-danger"></span>
+    </div>
+
+    <a asp-action="Index" class="btn btn-secondary">Volver atrás</a>
+    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }
