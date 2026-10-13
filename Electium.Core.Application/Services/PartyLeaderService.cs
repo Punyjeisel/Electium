@@ -126,5 +126,14 @@ namespace Electium.Core.Application.Services
                 Name = p.Name
             }).ToList();
         }
+
+        public async Task<int?> GetPartyIdByUserIdAsync(int userId)
+        {
+            var relations = await _partyLeaderRepository.GetAllAsync(
+                pl => pl.UserId == userId && pl.IsActive);
+
+            var relation = relations.FirstOrDefault();
+            return relation?.PoliticalPartyId;
+        }
     }
 }

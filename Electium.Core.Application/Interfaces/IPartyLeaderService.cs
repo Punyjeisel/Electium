@@ -16,5 +16,6 @@ namespace Electium.Core.Application.Interfaces
         Task<OperationResult> DeleteAsync(int id);
         Task<List<AvailableLeaderDto>> GetAvailableLeadersAsync();
         Task<List<AvailablePartyDto>> GetActivePartiesAsync();
+        Task<int?> GetPartyIdByUserIdAsync(int userId);
     }
 }

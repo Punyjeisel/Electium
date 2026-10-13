@@ -3,3 +3,12 @@
 }
 <h2>Panel del Dirigente Político</h2>
 <p>Bienvenido, @User.Identity?.Name</p>
+
+<ul class="list-group">
+    <li class="list-group-item">
+        <a asp-controller="Candidate" asp-action="Index">Candidatos</a>
+    </li>
+    <li class="list-group-item">
+        <a asp-controller="CandidatePosition" asp-action="Index">Asignar candidato a puesto</a>
+    </li>
+</ul>

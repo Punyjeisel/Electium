@@ -13,10 +13,12 @@ namespace Electium.Core.Application.Mappings
         {
             CreateMap<Candidate, CandidateDto>()
                 .ForMember(d => d.PoliticalPartyAcronym,
-                    opt => opt.MapFrom(s => s.PoliticalParty.Acronym));
+                    opt => opt.MapFrom(s => s.PoliticalParty.Acronym))
+                .ForMember(d => d.AssignedPositionName, opt => opt.Ignore());
 
             CreateMap<CreateCandidateDto, Candidate>();
 
+            CreateMap<Candidate, UpdateCandidateDto>();
             CreateMap<UpdateCandidateDto, Candidate>()
                 .ForMember(d => d.PhotoPath, opt => opt.Ignore());
         }

@@ -12,6 +12,7 @@ namespace Electium.Core.Application.DTOs
         public string PhotoPath { get; set; } = string.Empty;
         public int PoliticalPartyId { get; set; }
         public string PoliticalPartyAcronym { get; set; } = string.Empty;
+        public string? AssignedPositionName { get; set; }   // null = "sin puesto asociado"
         public bool IsActive { get; set; }
     }
 }

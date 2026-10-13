@@ -135,4 +135,22 @@ public class AllianceService : IAllianceService
         request.IsActive = false;
         await _requestRepository.UpdateAsync(request);
     }
+
+    public async Task<List<int>> GetAlliedPartyIdsAsync(int partyId)
+    {
+        var alliances = await _allianceRepository.GetAllAsync(
+            a => a.IsActive && (a.PartyAId == partyId || a.PartyBId == partyId));
+
+        return alliances
+            .Select(a => a.PartyAId == partyId ? a.PartyBId : a.PartyAId)
+            .ToList();
+    }
+
+    public async Task<bool> ArePartiesAlliedAsync(int partyAId, int partyBId)
+    {
+        return await _allianceRepository.AnyAsync(a =>
+            a.IsActive &&
+            ((a.PartyAId == partyAId && a.PartyBId == partyBId) ||
+             (a.PartyAId == partyBId && a.PartyBId == partyAId)));
+    }
 }

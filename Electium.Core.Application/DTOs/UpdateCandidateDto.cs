@@ -10,5 +10,6 @@ namespace Electium.Core.Application.DTOs
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string? PhotoPath { get; set; }
+        public bool IsActive { get; set; }
     }
 }
