@@ -1,0 +1,50 @@
+﻿@model Electium.Presentation.WebApp.ViewModels.Voting.CandidateListViewModel
+
+@{
+    ViewData["Title"] = "Seleccionar candidato";
+}
+
+<h2>@Model.PositionName</h2>
+
+<form asp-action="Candidates" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input type="hidden" asp-for="ElectionId" />
+    <input type="hidden" asp-for="ElectivePositionId" />
+    <input type="hidden" asp-for="PositionName" />
+
+    <div class="row g-3 my-3">
+        @foreach (var candidate in Model.Candidates)
+        {
+            var value = candidate.CandidateId ?? 0;
+            <div class="col-md-4">
+                <label class="card h-100 p-3 @(candidate.CandidateId == null ? "border-secondary" : "")">
+                    <input type="radio" name="SelectedCandidateId" value="@value" class="form-check-input me-2" />
+                    @if (!string.IsNullOrEmpty(candidate.CandidatePhotoPath))
+                    {
+                        <img src="@candidate.CandidatePhotoPath" class="img-fluid mb-2" style="max-height:120px;" />
+                    }
+                    <strong>@candidate.CandidateName</strong>
+                    @if (!string.IsNullOrEmpty(candidate.PartyAcronym))
+                    {
+                        <small class="text-muted">@candidate.PartyAcronym</small>
+                    }
+                </label>
+            </div>
+        }
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="SelectNone" class="form-check-input" type="checkbox" />
+        <label asp-for="SelectNone" class="form-check-label">
+            Votar por "Ninguno"
+        </label>
+    </div>
+
+    <a asp-action="Positions" class="btn btn-secondary">Volver atrás</a>
+    <button type="submit" class="btn btn-primary">Enviar voto</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

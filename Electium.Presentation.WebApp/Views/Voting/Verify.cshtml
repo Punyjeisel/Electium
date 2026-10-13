@@ -1,0 +1,34 @@
+﻿@model Electium.Presentation.WebApp.ViewModels.Voting.UploadIdViewModel
+
+@{
+    ViewData["Title"] = "Validar identidad";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">Validar identidad</h2>
+
+        <p class="text-muted">
+            Suba una foto clara del <strong>frontal</strong> de su cédula,
+            bien iluminada y sin sombras.
+        </p>
+
+        <form asp-action="Verify" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="IdentityNumber" />
+
+            <div class="mb-3">
+                <label asp-for="CedulaImage" class="form-label"></label>
+                <input asp-for="CedulaImage" type="file" class="form-control" accept="image/*" />
+                <span asp-validation-for="CedulaImage" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Enviar foto</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

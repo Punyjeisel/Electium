@@ -1,0 +1,27 @@
+﻿@model Electium.Presentation.WebApp.ViewModels.Voting.IdentityInputViewModel
+
+@{
+    ViewData["Title"] = "Votar";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">Ejercer su derecho al voto</h2>
+
+        <form asp-action="Index" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="IdentityNumber" class="form-label"></label>
+                <input asp-for="IdentityNumber" class="form-control" />
+                <span asp-validation-for="IdentityNumber" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Votar</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

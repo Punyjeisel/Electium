@@ -48,6 +48,13 @@ builder.Services.AddScoped<IFileStorageService>(sp =>
     return new FileStorageService(env.WebRootPath);
 });
 
+builder.Services.AddScoped<IOcrService>(sp =>
+{
+    var env = sp.GetRequiredService<IWebHostEnvironment>();
+    var tessdataPath = Path.Combine(env.WebRootPath, "tessdata");
+    return new OcrService(tessdataPath);
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

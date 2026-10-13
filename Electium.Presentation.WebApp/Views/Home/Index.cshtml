@@ -2,7 +2,16 @@
     ViewData["Title"] = "Inicio";
 }
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
 <div class="text-center">
     <h1 class="display-4">Electium</h1>
     <p>Plataforma de votación electrónica.</p>
+
+    <a asp-controller="Voting" asp-action="Index" class="btn btn-primary btn-lg mt-3">
+        Votar
+    </a>
 </div>

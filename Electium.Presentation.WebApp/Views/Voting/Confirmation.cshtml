@@ -1,0 +1,30 @@
+﻿@model Electium.Presentation.WebApp.ViewModels.Voting.VotingConfirmationViewModel
+
+@{
+    ViewData["Title"] = "Confirmar votación";
+}
+
+<h2>Confirmar votación</h2>
+
+<ul class="list-group my-3">
+    @foreach (var position in Model.Positions)
+    {
+        var done = Model.IsCompleted(position.ElectivePositionId);
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            @position.PositionName
+            @if (done)
+            {
+                <span class="badge bg-success">Votado</span>
+            }
+            else
+            {
+                <span class="badge bg-danger">Pendiente</span>
+            }
+        </li>
+    }
+</ul>
+
+<form asp-action="Complete" method="post">
+    <a asp-action="Positions" class="btn btn-secondary">Volver atrás</a>
+    <button type="submit" class="btn btn-primary">Finalizar votación</button>
+</form>
