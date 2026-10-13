@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Electium.Core.Application.DTOs
 {
-    internal class CreateElectionDto
+    public class CreateElectionDto
     {
+        public string Name { get; set; } = string.Empty;
+        public DateTime Date { get; set; }
     }
 }

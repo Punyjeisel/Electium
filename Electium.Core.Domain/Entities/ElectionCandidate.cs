@@ -14,6 +14,8 @@ namespace Electium.Core.Domain.Entities
 
         public int ElectivePositionId { get; set; }
         public ElectivePosition ElectivePosition { get; set; } = null!;
+        public int CandidateId { get; set; }
+        public Candidate Candidate { get; set; } = null!;
 
         public int PoliticalPartyId { get; set; }
         public PoliticalParty PoliticalParty { get; set; } = null!;

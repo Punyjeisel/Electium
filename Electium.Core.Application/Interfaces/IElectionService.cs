@@ -1,10 +1,17 @@
-﻿using System;
+﻿using Electium.Core.Application.DTOs;
+using Electium.Core.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Electium.Core.Application.Interfaces
 {
-    internal interface IElectionService
+    public interface IElectionService : IGenericService<ElectionDto, Election>
     {
+        Task<bool> HasActiveElectionAsync();
+        Task<List<ElectionDto>> GetAllOrderedAsync();
+        Task CreateAsync(CreateElectionDto dto);
+        Task FinishAsync(int electionId);
+        Task<List<ElectionResultDto>> GetResultsAsync(int electionId);
     }
 }
