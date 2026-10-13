@@ -41,6 +41,7 @@ builder.Services.AddScoped<ICandidatePositionService, CandidatePositionService>(
 builder.Services.AddScoped<IAllianceService, AllianceService>();
 builder.Services.AddScoped<IElectionService, ElectionService>();
 builder.Services.AddScoped<IVotingService, VotingService>();
+builder.Services.AddScoped<ILeaderDashboardService, LeaderDashboardService>();
 
 builder.Services.AddScoped<IFileStorageService>(sp =>
 {

@@ -1,17 +1,78 @@
-﻿@{
+﻿@model Electium.Presentation.WebApp.ViewModels.LeaderHomeViewModel
+
+@{
     ViewData["Title"] = "Home Dirigente";
 }
-<h2>Panel del Dirigente Político</h2>
-<p>Bienvenido, @User.Identity?.Name</p>
 
-<ul class="list-group">
-    <li class="list-group-item">
-        <a asp-controller="Candidate" asp-action="Index">Candidatos</a>
-    </li>
-    <li class="list-group-item">
-        <a asp-controller="CandidatePosition" asp-action="Index">Asignar candidato a puesto</a>
-    </li>
-    <li class="list-group-item">
-        <a asp-controller="Alliance" asp-action="Index">Alianzas políticas</a>
-    </li>
-</ul>
+@if (Model.Dashboard == null)
+{
+    <div class="alert alert-danger">No tiene un partido asignado.</div>
+}
+else
+{
+    <div class="d-flex align-items-center mb-4">
+        <img src="@Model.Dashboard.PartyLogoPath" alt="logo" style="height:80px;" class="me-3" />
+        <div>
+            <h2 class="mb-0">@Model.Dashboard.PartyName</h2>
+            <span class="badge bg-primary">@Model.Dashboard.PartyAcronym</span>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>@Model.Dashboard.ActiveCandidates</h3>
+                    <small class="text-muted">Candidatos activos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>@Model.Dashboard.InactiveCandidates</h3>
+                    <small class="text-muted">Candidatos inactivos</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>@Model.Dashboard.ActiveAlliances</h3>
+                    <small class="text-muted">Alianzas vigentes</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>@Model.Dashboard.PendingReceivedRequests</h3>
+                    <small class="text-muted">Solicitudes pendientes</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>@Model.Dashboard.AssignedCandidates</h3>
+                    <small class="text-muted">Candidatos asignados a puesto</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a asp-controller="Candidate" asp-action="Index">Candidatos</a>
+        </li>
+        <li class="list-group-item">
+            <a asp-controller="CandidatePosition" asp-action="Index">Asignar candidato a puesto</a>
+        </li>
+        <li class="list-group-item">
+            <a asp-controller="Alliance" asp-action="Index">Alianzas políticas</a>
+        </li>
+    </ul>
+}

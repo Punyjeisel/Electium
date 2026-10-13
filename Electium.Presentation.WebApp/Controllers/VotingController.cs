@@ -13,15 +13,18 @@ namespace Electium.Presentation.WebApp.Controllers
         private readonly IVotingService _votingService;
         private readonly ICitizenService _citizenService;
         private readonly IOcrService _ocrService;
+        private readonly IEmailService _emailService;
 
         public VotingController(
             IVotingService votingService,
             ICitizenService citizenService,
-            IOcrService ocrService)
+            IOcrService ocrService,
+            IEmailService emailService)
         {
             _votingService = votingService;
             _citizenService = citizenService;
             _ocrService = ocrService;
+            _emailService = emailService;
         }
 
         // --- Step 1: identity number ---
@@ -241,6 +244,9 @@ namespace Electium.Presentation.WebApp.Controllers
                 return RedirectToAction(nameof(Positions));
             }
 
+            // Build the summary before writing (session still has the candidate ids)
+            var summary = await BuildSummaryAsync(electionId.Value, citizenId.Value, votes, positions);
+
             // Write each vote (anonymous)
             foreach (var vote in votes)
             {
@@ -253,12 +259,97 @@ namespace Electium.Presentation.WebApp.Controllers
                 });
             }
 
-            // Mark as voter and clear session
             await _votingService.CompleteVotingAsync(electionId.Value, citizenId.Value);
+
+            // Send email
+            if (!string.IsNullOrWhiteSpace(summary.CitizenEmail))
+            {
+                try
+                {
+                    var body = BuildEmailBody(summary);
+                    await _emailService.SendAsync(
+                        summary.CitizenEmail,
+                        $"Resumen de su votación: {summary.ElectionName}",
+                        body);
+                }
+                catch
+                {
+                    // Email failure should not block the vote
+                }
+            }
+
             VotingSession.Clear(HttpContext.Session);
 
             TempData["Success"] = "Su voto ha sido registrado. Recibirá un correo con el resumen.";
             return RedirectToAction("Index", "Home");
+        }
+
+        // --- helpers ---
+
+        private async Task<VotingSummaryDto> BuildSummaryAsync(
+            int electionId, int citizenId,
+            Dictionary<int, int?> votes,
+            List<VotingPositionDto> positions)
+        {
+            var summary = await _votingService.CompleteVotingAsync(electionId, citizenId);
+
+            summary.Items.Clear();
+
+            foreach (var position in positions)
+            {
+                var candidateId = votes.ContainsKey(position.ElectivePositionId)
+                    ? votes[position.ElectivePositionId]
+                    : null;
+
+                string candidateName;
+                string acronym;
+
+                if (candidateId == null)
+                {
+                    candidateName = "Ninguno";
+                    acronym = string.Empty;
+                }
+                else
+                {
+                    var candidates = await _votingService.GetCandidatesByPositionAsync(
+                        electionId, position.ElectivePositionId);
+                    var chosen = candidates.FirstOrDefault(c => c.CandidateId == candidateId);
+
+                    candidateName = chosen?.CandidateName ?? "Ninguno";
+                    acronym = chosen?.PartyAcronym ?? string.Empty;
+                }
+
+                summary.Items.Add(new VotingSummaryItemDto
+                {
+                    PositionName = position.PositionName,
+                    CandidateName = candidateName,
+                    PartyAcronym = acronym
+                });
+            }
+
+            return summary;
+        }
+
+        private static string BuildEmailBody(VotingSummaryDto summary)
+        {
+            var rows = string.Join("", summary.Items.Select(i =>
+                $"<tr><td>{i.PositionName}</td><td>{i.CandidateName}</td><td>{i.PartyAcronym}</td></tr>"));
+
+            return $@"
+        <h2>Resumen de su votación</h2>
+        <p><strong>Ciudadano:</strong> {summary.CitizenName}</p>
+        <p><strong>Elección:</strong> {summary.ElectionName}</p>
+        <p><strong>Fecha:</strong> {summary.ElectionDate:dd/MM/yyyy}</p>
+        <table border='1' cellpadding='6' cellspacing='0'>
+            <thead>
+                <tr><th>Puesto</th><th>Candidato</th><th>Partido</th></tr>
+            </thead>
+            <tbody>
+                {rows}
+            </tbody>
+        </table>
+        <p>Gracias por ejercer su derecho al voto.</p>
+    ";
         }
     }
 }
