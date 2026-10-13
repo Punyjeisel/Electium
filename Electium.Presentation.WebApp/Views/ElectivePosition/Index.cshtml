@@ -1,0 +1,64 @@
+﻿@model Electium.Presentation.WebApp.ViewModels.ElectivePosition.ElectivePositionIndexViewModel
+
+@{
+    ViewData["Title"] = "Puestos Electivos";
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Puestos Electivos</h2>
+    @if (Model.CanModify)
+    {
+        <a asp-action="Create" class="btn btn-primary">Crear puesto</a>
+    }
+    else
+    {
+        <span class="badge bg-warning text-dark">Elección activa - solo lectura</span>
+    }
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th class="text-end">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Positions)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <span class="badge bg-success">Activo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactivo</span>
+                    }
+                </td>
+                <td class="text-end">
+                    @if (Model.CanModify)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id"
+                           class="btn btn-sm btn-outline-primary">Editar</a>
+
+                        <a asp-action="Toggle" asp-route-id="@item.Id"
+                           class="btn btn-sm @(item.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                            @(item.IsActive ? "Desactivar" : "Activar")
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

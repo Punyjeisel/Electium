@@ -12,6 +12,11 @@ namespace Electium.Core.Application.Mappings
         public ElectivePositionProfile()
         {
             CreateMap<ElectivePosition, ElectivePositionDto>().ReverseMap();
+
+            CreateMap<CreateElectivePositionDto, ElectivePosition>();
+
+            CreateMap<ElectivePosition, UpdateElectivePositionDto>();
+            CreateMap<UpdateElectivePositionDto, ElectivePosition>();
         }
     }
 }
