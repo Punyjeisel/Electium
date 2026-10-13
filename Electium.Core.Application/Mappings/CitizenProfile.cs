@@ -13,6 +13,11 @@ namespace Electium.Core.Application.Mappings
         public CitizenProfile()
         {
             CreateMap<Citizen, CitizenDto>().ReverseMap();
+
+            CreateMap<CreateCitizenDto, Citizen>();
+
+            CreateMap<Citizen, UpdateCitizenDto>();
+            CreateMap<UpdateCitizenDto, Citizen>();
         }
     }
 }

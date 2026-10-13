@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Home Administrador";
+}
+<h2>Panel del Administrador</h2>
+<p>Bienvenido, @User.Identity?.Name</p>
+
+<ul class="list-group">
+    <li class="list-group-item">
+        <a asp-controller="ElectivePosition" asp-action="Index">Puestos Electivos</a>
+    </li>
+    <li class="list-group-item">
+        <a asp-controller="Citizen" asp-action="Index">Ciudadanos</a>
+    </li>
+</ul>
