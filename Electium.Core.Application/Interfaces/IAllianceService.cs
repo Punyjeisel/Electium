@@ -16,7 +16,6 @@ namespace Electium.Core.Application.Interfaces
         Task DeleteRequestAsync(int requestId);
         Task<List<int>> GetAlliedPartyIdsAsync(int partyId);
         Task<bool> ArePartiesAlliedAsync(int partyAId, int partyBId);
+        Task<List<AvailablePartyDto>> GetPartiesForRequestAsync(int currentPartyId);
     }
-
-
 }

@@ -13,13 +13,17 @@ public class AllianceService : IAllianceService
     private readonly IGenericRepository<PoliticalAlliance> _allianceRepository;
     private readonly IMapper _mapper;
 
+    private readonly IGenericRepository<PoliticalParty> _partyRepository;
+
     public AllianceService(
         IGenericRepository<AllianceRequest> requestRepository,
         IGenericRepository<PoliticalAlliance> allianceRepository,
+        IGenericRepository<PoliticalParty> partyRepository,
         IMapper mapper)
     {
         _requestRepository = requestRepository;
         _allianceRepository = allianceRepository;
+        _partyRepository = partyRepository;
         _mapper = mapper;
     }
 
@@ -152,5 +156,34 @@ public class AllianceService : IAllianceService
             a.IsActive &&
             ((a.PartyAId == partyAId && a.PartyBId == partyBId) ||
              (a.PartyAId == partyBId && a.PartyBId == partyAId)));
+    }
+
+    public async Task<List<AvailablePartyDto>> GetPartiesForRequestAsync(int currentPartyId)
+    {
+        // Active parties except the current one
+        var parties = await _partyRepository.GetAllAsync(
+            p => p.IsActive && p.Id != currentPartyId);
+
+        var result = new List<AvailablePartyDto>();
+
+        foreach (var party in parties)
+        {
+            // Exclude parties with a pending request in either direction
+            var hasPending = await _requestRepository.AnyAsync(r =>
+                r.Status == AllianceStatus.Pending &&
+                ((r.RequesterPartyId == currentPartyId && r.ReceiverPartyId == party.Id) ||
+                 (r.RequesterPartyId == party.Id && r.ReceiverPartyId == currentPartyId)));
+
+            if (hasPending) continue;
+
+            result.Add(new AvailablePartyDto
+            {
+                Id = party.Id,
+                Acronym = party.Acronym,
+                Name = party.Name
+            });
+        }
+
+        return result;
     }
 }
