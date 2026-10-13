@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Electium.Core.Domain.Entities
 {
-    public class PoliticalAliance : BaseEntity
+    public class PoliticalAlliance : BaseEntity
     {
         public int PartyAId { get; set; }
         public PoliticalParty PartyA { get; set; }
