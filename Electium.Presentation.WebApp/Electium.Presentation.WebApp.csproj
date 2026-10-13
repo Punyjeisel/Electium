@@ -4,7 +4,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>3ce8604d-ed86-49df-bceb-f56b44776d9c</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="16.2.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Electium.Core.Application\Electium.Core.Application.csproj" />

@@ -1,29 +1,62 @@
+using Electium.Core.Application.Interfaces;
+using Electium.Core.Application.Mappings;
+using Electium.Core.Application.Services;
+using Electium.Core.Domain.Interfaces;
+using Electium.Infrastructure.Persistence;
+using Electium.Infrastructure.Shared;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// MVC
 builder.Services.AddControllersWithViews();
+
+// Session (used for the voting flow)
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// Layers
+builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddShared(builder.Configuration);
+
+// AutoMapper - load all profiles from Application
+builder.Services.AddAutoMapper(cfg => { }, typeof(UserProfile).Assembly);
+
+// Generic service
+builder.Services.AddScoped(typeof(IGenericService<,>), typeof(GenericService<,>));
+
+// Specific services
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICitizenService, CitizenService>();
+builder.Services.AddScoped<IPoliticalPartyService, PoliticalPartyService>();
+builder.Services.AddScoped<IElectivePositionService, ElectivePositionService>();
+builder.Services.AddScoped<ICandidateService, CandidateService>();
+builder.Services.AddScoped<IPartyLeaderService, PartyLeaderService>();
+builder.Services.AddScoped<ICandidatePositionService, CandidatePositionService>();
+builder.Services.AddScoped<IAllianceService, AllianceService>();
+builder.Services.AddScoped<IElectionService, ElectionService>();
+builder.Services.AddScoped<IVotingService, VotingService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
-
-app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

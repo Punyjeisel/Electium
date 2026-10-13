@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Electium.Core.Application.Interfaces
 {
-    internal interface IEmailService
+    // Sends emails (implementation lives in Shared)
+    public interface IEmailService
     {
+        Task SendAsync(string to, string subject, string body);
     }
 }
