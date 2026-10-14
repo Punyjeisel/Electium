@@ -1,0 +1,78 @@
+﻿@model Electium.Presentation.WebApp.ViewModels.AdminHomeViewModel
+
+@{
+    ViewData["Title"] = "Home Administrador";
+}
+
+<h2>Panel del Administrador</h2>
+<p>Bienvenido, @User.Identity?.Name</p>
+
+<ul class="list-group mb-4">
+    <li class="list-group-item"><a asp-controller="ElectivePosition" asp-action="Index">Puestos Electivos</a></li>
+    <li class="list-group-item"><a asp-controller="Citizen" asp-action="Index">Ciudadanos</a></li>
+    <li class="list-group-item"><a asp-controller="PoliticalParty" asp-action="Index">Partidos Políticos</a></li>
+    <li class="list-group-item"><a asp-controller="User" asp-action="Index">Usuarios</a></li>
+    <li class="list-group-item"><a asp-controller="PartyLeader" asp-action="Index">Asignación de Dirigentes</a></li>
+    <li class="list-group-item"><a asp-controller="Election" asp-action="Index">Elecciones</a></li>
+</ul>
+
+@if (Model.Years.Any())
+{
+    <hr />
+    <h3>Resumen Electoral</h3>
+
+    <form asp-action="Index" method="post" class="row g-2 align-items-end mb-3">
+        <div class="col-auto">
+            <label class="form-label">Año</label>
+            <select name="selectedYear" class="form-select">
+                @foreach (var year in Model.Years)
+                {
+                    if (int.Parse(year.Value) == Model.SelectedYear)
+                    {
+                        <option value="@year.Value" selected>@year.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@year.Value">@year.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Obtener Resumen Electoral</button>
+        </div>
+    </form>
+
+    @if (Model.Summary != null && Model.Summary.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Elección</th>
+                    <th>Partidos</th>
+                    <th>Candidatos</th>
+                    <th>Votos emitidos</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Summary)
+                {
+                    <tr>
+                        <td>@item.ElectionName</td>
+                        <td>@item.PartyCount</td>
+                        <td>@item.CandidateCount</td>
+                        <td>@item.TotalVotes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted">No hay elecciones registradas en ese año.</p>
+    }
+}
+else
+{
+    <p class="text-muted">Aún no hay elecciones registradas en el sistema.</p>
+}

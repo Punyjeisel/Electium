@@ -236,5 +236,42 @@ namespace Electium.Core.Application.Services
                 Name = election.Name
             };
         }
+
+        public async Task<List<int>> GetAvailableYearsAsync()
+        {
+            var elections = await _electionRepository.GetAllAsync();
+            return elections
+                .Select(e => e.Date.Year)
+                .Distinct()
+                .OrderByDescending(y => y)
+                .ToList();
+        }
+
+        public async Task<List<ElectionSummaryDto>> GetSummaryByYearAsync(int year)
+        {
+            var elections = await _electionRepository.GetAllAsync(
+                e => e.Date.Year == year);
+
+            var result = new List<ElectionSummaryDto>();
+
+            foreach (var election in elections)
+            {
+                var participants = await _electionCandidateRepository.GetAllAsync(
+                    ec => ec.ElectionId == election.Id);
+
+                var voters = await _electionVoterRepository.GetAllAsync(
+                    ev => ev.ElectionId == election.Id);
+
+                result.Add(new ElectionSummaryDto
+                {
+                    ElectionName = election.Name,
+                    PartyCount = participants.Select(p => p.PoliticalPartyId).Distinct().Count(),
+                    CandidateCount = participants.Select(p => p.CandidateId).Distinct().Count(),
+                    TotalVotes = voters.Count
+                });
+            }
+
+            return result;
+        }
     }
 }

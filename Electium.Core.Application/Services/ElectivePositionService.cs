@@ -16,18 +16,23 @@ namespace Electium.Core.Application.Services
     {
         private readonly IGenericRepository<ElectivePosition> _positionRepository;
         private readonly IGenericRepository<Election> _electionRepository;
+        private readonly IGenericRepository<CandidatePosition> _candidatePositionRepository;
+        private readonly IGenericRepository<Candidate> _candidateRepository;
 
         public ElectivePositionService(
             IGenericRepository<ElectivePosition> positionRepository,
             IGenericRepository<Election> electionRepository,
+            IGenericRepository<CandidatePosition> candidatePositionRepository,
+            IGenericRepository<Candidate> candidateRepository,
             IMapper mapper)
             : base(positionRepository, mapper)
         {
             _positionRepository = positionRepository;
             _electionRepository = electionRepository;
+            _candidatePositionRepository = candidatePositionRepository;
+            _candidateRepository = candidateRepository;
         }
 
-        // Creation, edit and toggle are only allowed when no election is running
         public async Task<bool> CanModifyAsync()
         {
             var hasActive = await _electionRepository.AnyAsync(
@@ -85,6 +90,36 @@ namespace Electium.Core.Application.Services
                 return OperationResult.Fail("El puesto electivo no existe.");
 
             entity.IsActive = !entity.IsActive;
+
+            // If the position is deactivated, cascade the change:
+            // 1. Deactivate all assignments for this position
+            // 2. Deactivate all candidates that were assigned to this position
+            if (!entity.IsActive)
+            {
+                var assignments = await _candidatePositionRepository.GetAllAsync(
+                    cp => cp.ElectivePositionId == entity.Id && cp.IsActive);
+
+                var candidateIds = assignments.Select(a => a.CandidateId).Distinct().ToList();
+
+                // Deactivate the assignments
+                foreach (var assignment in assignments)
+                {
+                    assignment.IsActive = false;
+                    await _candidatePositionRepository.UpdateAsync(assignment);
+                }
+
+                // Deactivate the candidates
+                foreach (var candidateId in candidateIds)
+                {
+                    var candidate = await _candidateRepository.GetByIdAsync(candidateId);
+                    if (candidate != null && candidate.IsActive)
+                    {
+                        candidate.IsActive = false;
+                        await _candidateRepository.UpdateAsync(candidate);
+                    }
+                }
+            }
+
             await _positionRepository.UpdateAsync(entity);
 
             return OperationResult.Ok();

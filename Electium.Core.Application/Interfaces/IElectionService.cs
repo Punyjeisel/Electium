@@ -16,5 +16,7 @@ namespace Electium.Core.Application.Interfaces
         Task<FinishElectionViewModelDto?> GetFinishInfoAsync(int id);
         Task<OperationResult> FinishAsync(int electionId);
         Task<List<ElectionResultDto>?> GetResultsAsync(int electionId);
+        Task<List<int>> GetAvailableYearsAsync();
+        Task<List<ElectionSummaryDto>> GetSummaryByYearAsync(int year);
     }
 }
