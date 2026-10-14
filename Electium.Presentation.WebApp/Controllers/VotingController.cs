@@ -3,6 +3,7 @@ using Electium.Core.Application.Interfaces;
 using Electium.Core.Domain.Enums;
 using Electium.Presentation.WebApp.Services;
 using Electium.Presentation.WebApp.ViewModels.Voting;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Ocsp;
 
@@ -32,6 +33,16 @@ namespace Electium.Presentation.WebApp.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            // Admins and leaders cannot vote; redirect to their home
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                if (User.IsInRole("Administrator"))
+                    return RedirectToAction("Index", "AdminHome");
+
+                if (User.IsInRole("PoliticalLeader"))
+                    return RedirectToAction("Index", "LeaderHome");
+            }
+
             VotingSession.Clear(HttpContext.Session);
             return View(new IdentityInputViewModel());
         }
@@ -63,7 +74,6 @@ namespace Electium.Presentation.WebApp.Controllers
                     return View(vm);
             }
 
-            // Can proceed → go to ID upload
             TempData["IdentityNumber"] = vm.IdentityNumber;
             TempData["ElectionId"] = check.ActiveElectionId;
             TempData["CitizenId"] = check.CitizenId;
@@ -114,7 +124,6 @@ namespace Electium.Presentation.WebApp.Controllers
                 return View(vm);
             }
 
-            // Success → start voting session
             var electionId = (int)TempData["ElectionId"]!;
             var citizenId = (int)TempData["CitizenId"]!;
 
@@ -244,7 +253,7 @@ namespace Electium.Presentation.WebApp.Controllers
                 return RedirectToAction(nameof(Positions));
             }
 
-            // Build the summary before writing (session still has the candidate ids)
+            // Build summary from session before writing
             var summary = await BuildSummaryAsync(electionId.Value, citizenId.Value, votes, positions);
 
             // Write each vote (anonymous)
@@ -261,7 +270,7 @@ namespace Electium.Presentation.WebApp.Controllers
 
             await _votingService.CompleteVotingAsync(electionId.Value, citizenId.Value);
 
-            // Send email
+            // Send email (failure should not block the vote)
             if (!string.IsNullOrWhiteSpace(summary.CitizenEmail))
             {
                 try
@@ -274,7 +283,7 @@ namespace Electium.Presentation.WebApp.Controllers
                 }
                 catch
                 {
-                    // Email failure should not block the vote
+                    // ignore
                 }
             }
 
@@ -284,7 +293,7 @@ namespace Electium.Presentation.WebApp.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // --- helpers ---
+        // --- private helpers ---
 
         private async Task<VotingSummaryDto> BuildSummaryAsync(
             int electionId, int citizenId,
@@ -336,20 +345,20 @@ namespace Electium.Presentation.WebApp.Controllers
                 $"<tr><td>{i.PositionName}</td><td>{i.CandidateName}</td><td>{i.PartyAcronym}</td></tr>"));
 
             return $@"
-        <h2>Resumen de su votación</h2>
-        <p><strong>Ciudadano:</strong> {summary.CitizenName}</p>
-        <p><strong>Elección:</strong> {summary.ElectionName}</p>
-        <p><strong>Fecha:</strong> {summary.ElectionDate:dd/MM/yyyy}</p>
-        <table border='1' cellpadding='6' cellspacing='0'>
-            <thead>
-                <tr><th>Puesto</th><th>Candidato</th><th>Partido</th></tr>
-            </thead>
-            <tbody>
-                {rows}
-            </tbody>
-        </table>
-        <p>Gracias por ejercer su derecho al voto.</p>
-    ";
+            <h2>Resumen de su votación</h2>
+            <p><strong>Ciudadano:</strong> {summary.CitizenName}</p>
+            <p><strong>Elección:</strong> {summary.ElectionName}</p>
+            <p><strong>Fecha:</strong> {summary.ElectionDate:dd/MM/yyyy}</p>
+            <table border='1' cellpadding='6' cellspacing='0'>
+                <thead>
+                    <tr><th>Puesto</th><th>Candidato</th><th>Partido</th></tr>
+                </thead>
+                <tbody>
+                    {rows}
+                </tbody>
+            </table>
+            <p>Gracias por ejercer su derecho al voto.</p>
+        ";
         }
     }
 }
