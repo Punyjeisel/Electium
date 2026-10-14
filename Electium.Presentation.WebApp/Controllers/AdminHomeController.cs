@@ -31,8 +31,6 @@ namespace Electium.Presentation.WebApp.Controllers
             return View(vm);
         }
 
-        // --- private helpers ---
-
         private async Task<AdminHomeViewModel> BuildViewModelAsync(int? requestedYear)
         {
             var years = await _electionService.GetAvailableYearsAsync();
@@ -46,8 +44,7 @@ namespace Electium.Presentation.WebApp.Controllers
                 }).ToList()
             };
 
-            if (!years.Any())
-                return vm;
+            if (!years.Any()) return vm;
 
             vm.SelectedYear = requestedYear ?? years.First();
             vm.Summary = await _electionService.GetSummaryByYearAsync(vm.SelectedYear);

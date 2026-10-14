@@ -176,31 +176,56 @@ namespace Electium.Core.Application.Services
 
             var votes = await _voteRepository.GetAllAsync(v => v.ElectionId == electionId);
 
-            // Group by position
             var results = participants
                 .GroupBy(p => new { p.ElectivePositionId, p.ElectivePosition.Name })
                 .Select(g =>
                 {
-                    var positionVotes = votes.Where(v => v.ElectivePositionId == g.Key.ElectivePositionId).ToList();
+                    var positionVotes = votes
+                        .Where(v => v.ElectivePositionId == g.Key.ElectivePositionId)
+                        .ToList();
+
                     var totalForPosition = positionVotes.Count;
 
                     var candidateResults = g
                         .GroupBy(p => new { p.CandidateId, p.Candidate, p.PoliticalParty })
                         .Select(cg =>
                         {
-                            var candidateVotes = positionVotes.Count(v => v.CandidateId == cg.Key.CandidateId);
+                            var candidateVotes = positionVotes
+                                .Count(v => v.CandidateId == cg.Key.CandidateId);
+
                             var percentage = totalForPosition == 0
                                 ? 0
                                 : (double)candidateVotes / totalForPosition * 100;
 
                             return new CandidateResultDto
                             {
-                                CandidateName = cg.Key.Candidate.FirstName + " " + cg.Key.Candidate.LastName,
+                                CandidateName =
+                                    cg.Key.Candidate.FirstName + " " + cg.Key.Candidate.LastName,
                                 PartyAcronym = cg.Key.PoliticalParty.Acronym,
                                 Votes = candidateVotes,
                                 Percentage = Math.Round(percentage, 2)
                             };
                         })
+                        .ToList();
+
+                    // Add "Ninguno" as a row if there were null votes
+                    var noneVotes = positionVotes.Count(v => v.CandidateId == null);
+                    if (noneVotes > 0)
+                    {
+                        var nonePercentage = totalForPosition == 0
+                            ? 0
+                            : (double)noneVotes / totalForPosition * 100;
+
+                        candidateResults.Add(new CandidateResultDto
+                        {
+                            CandidateName = "Ninguno",
+                            PartyAcronym = string.Empty,
+                            Votes = noneVotes,
+                            Percentage = Math.Round(nonePercentage, 2)
+                        });
+                    }
+
+                    var ordered = candidateResults
                         .OrderByDescending(c => c.Votes)
                         .ToList();
 
@@ -208,7 +233,7 @@ namespace Electium.Core.Application.Services
                     {
                         PositionName = g.Key.Name,
                         TotalVotesForPosition = totalForPosition,
-                        Candidates = candidateResults
+                        Candidates = ordered
                     };
                 })
                 .ToList();

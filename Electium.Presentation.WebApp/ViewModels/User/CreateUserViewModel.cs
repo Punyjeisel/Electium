@@ -24,6 +24,8 @@ namespace Electium.Presentation.WebApp.ViewModels.User
 
         [Required(ErrorMessage = "La contraseña es obligatoria.")]
         [DataType(DataType.Password)]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$",
+            ErrorMessage = "Debe tener al menos 6 caracteres, 1 mayúscula, 1 número y 1 carácter especial.")]
         [Display(Name = "Contraseña")]
         public string Password { get; set; } = string.Empty;
 

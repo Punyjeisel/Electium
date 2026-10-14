@@ -11,23 +11,17 @@ using Electium.Core.Domain.Entities;
 
 namespace Electium.Core.Application.Services
 {
+    // Base service with common CRUD operations
     public class GenericService<TDto, TEntity> : IGenericService<TDto, TEntity>
         where TDto : class
         where TEntity : BaseEntity
     {
         protected readonly IGenericRepository<TEntity> _repository;
         protected readonly IMapper _mapper;
-        private IGenericRepository<User> repository;
 
         public GenericService(IGenericRepository<TEntity> repository, IMapper mapper)
         {
             _repository = repository;
-            _mapper = mapper;
-        }
-
-        public GenericService(IGenericRepository<User> repository, IMapper mapper)
-        {
-            this.repository = repository;
             _mapper = mapper;
         }
 

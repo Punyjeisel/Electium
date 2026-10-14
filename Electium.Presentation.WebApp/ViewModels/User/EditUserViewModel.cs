@@ -25,6 +25,8 @@ namespace Electium.Presentation.WebApp.ViewModels.User
         public string UserName { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$",
+            ErrorMessage = "Debe tener al menos 6 caracteres, 1 mayúscula, 1 número y 1 carácter especial.")]
         [Display(Name = "Nueva contraseña (opcional)")]
         public string? Password { get; set; }
 

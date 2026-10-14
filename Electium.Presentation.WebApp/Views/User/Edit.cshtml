@@ -39,20 +39,35 @@
     <div class="row">
         <div class="col-md-6 mb-3">
             <label asp-for="Password" class="form-label"></label>
-            <input asp-for="Password" class="form-control" />
+            <div class="input-group">
+                <input asp-for="Password" id="editPassword" class="form-control" />
+                <button type="button" class="btn btn-outline-secondary"
+                        onclick="togglePassword('editPassword')">
+                    👁
+                </button>
+            </div>
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
         <div class="col-md-6 mb-3">
             <label asp-for="ConfirmPassword" class="form-label"></label>
-            <input asp-for="ConfirmPassword" class="form-control" />
+            <div class="input-group">
+                <input asp-for="ConfirmPassword" id="editConfirmPassword" class="form-control" />
+                <button type="button" class="btn btn-outline-secondary"
+                        onclick="togglePassword('editConfirmPassword')">
+                    👁
+                </button>
+            </div>
             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
         </div>
     </div>
 
     <div class="mb-3">
         <label asp-for="Role" class="form-label"></label>
-        <select asp-for="Role" class="form-select"
-                asp-items="Html.GetEnumSelectList<UserRole>()"></select>
+        <select asp-for="Role" class="form-select">
+            <option value="">-- Seleccione un rol --</option>
+            <option value="1">Administrador</option>
+            <option value="2">Dirigente político</option>
+        </select>
         <span asp-validation-for="Role" class="text-danger"></span>
     </div>
 

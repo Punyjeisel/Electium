@@ -1,0 +1,13 @@
+﻿@model Electium.Presentation.WebApp.ViewModels.ElectivePosition.ToggleElectivePositionViewModel
+
+@{
+    ViewData["Title"] = "Confirmar cambio de estado";
+}
+
+<h2>@Model.Message</h2>
+
+<form asp-action="Toggle" method="post" class="mt-4">
+    <input type="hidden" asp-for="Id" />
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    <button type="submit" class="btn btn-primary">Aceptar</button>
+</form>
